@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D1B3D" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>NELA SERVICE</title>
+  <style>
+    :root{
+      --navy:#0D1B3D;
+      --blue:#1E88FF;
+      --pale:#E6F0FF;
+      --bg:#F5F7FA;
+      --text:#14213d;
+      --muted:#6b7280;
+      --danger:#d92d20;
+      --success:#0f9d58;
+      --card:#ffffff;
+      --border:#d9e2ef;
+      --shadow:0 8px 30px rgba(13,27,61,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--text)}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;min-height:100vh;background:var(--bg)}
+    header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo-box{width:42px;height:42px;border-radius:12px;background:var(--navy);display:grid;place-items:center;color:#fff;font-weight:800}
+    .brand h1{font-size:16px;margin:0;letter-spacing:.8px;color:var(--navy)}
+    .brand small{display:block;color:var(--blue);font-size:10px;margin-top:2px}
+    .monthbar{display:flex;gap:8px;align-items:center;justify-content:center;padding:12px}
+    .monthbar button,.monthbar select{border:1px solid var(--border);background:#fff;border-radius:10px;padding:9px 12px;color:var(--navy)}
+    .section{padding:10px 14px}
+    .section-title{font-weight:800;color:var(--navy);margin:4px 0 10px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .hotel-card,.worker-card,.menu-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+    .hotel-card{padding:14px 10px;text-align:center}
+    .hotel-card b{display:block;color:var(--blue);font-size:14px}
+    .hotel-card strong{display:block;font-size:22px;margin-top:8px;color:var(--navy)}
+    .hotel-card small{font-size:10px;color:var(--muted)}
+    .worker-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+    .worker-card{min-width:115px;padding:12px;text-align:center}
+    .avatar{width:42px;height:42px;margin:0 auto 8px;border-radius:50%;background:var(--pale);display:grid;place-items:center;color:var(--navy);font-weight:800}
+    .worker-card strong{display:block;color:var(--navy)}
+    .worker-card span{display:block;color:var(--blue);font-weight:800;margin-top:4px}
+    .menu-list{display:grid;gap:10px}
+    .menu-card{padding:14px;display:flex;align-items:center;justify-content:space-between}
+    .menu-card .meta{display:flex;align-items:center;gap:12px}
+    .menu-icon{width:40px;height:40px;border-radius:10px;background:var(--pale);display:grid;place-items:center;color:var(--navy)}
+    .menu-card h3{margin:0;font-size:15px}
+    .menu-card p{margin:3px 0 0;font-size:11px;color:var(--muted)}
+    nav{position:sticky;bottom:0;z-index:20;background:var(--navy);display:grid;grid-template-columns:repeat(4,1fr);padding:9px 6px calc(9px + env(safe-area-inset-bottom))}
+    nav button{background:transparent;border:0;color:#d9e7ff;font-size:11px;padding:4px}
+    nav button.active{color:#fff;font-weight:800}
+    .view{display:none}.view.active{display:block}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .btn{border:0;border-radius:10px;padding:10px 13px;font-weight:700}
+    .btn-primary{background:var(--navy);color:white}
+    .btn-blue{background:var(--blue);color:white}
+    .btn-light{background:white;border:1px solid var(--border);color:var(--navy)}
+    .btn-danger{background:#fff1f0;color:var(--danger);border:1px solid #ffd0cb}
+    .day-card{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+    .day-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fbfdff;border-bottom:1px solid var(--border)}
+    .day-head.today{outline:2px solid var(--blue);outline-offset:-2px}
+    .day-title{font-weight:800;color:var(--navy)}
+    .shift{display:grid;grid-template-columns:1.15fr .8fr .9fr auto;gap:6px;align-items:center;padding:11px 14px;border-bottom:1px dashed var(--border);font-size:13px}
+    .shift:last-child{border-bottom:0}
+    .shift .hotel{color:var(--blue);font-weight:700}
+    .shift-actions{display:flex;gap:5px}
+    .iconbtn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px}
+    .empty{padding:14px;color:var(--muted);font-size:13px}
+    .add-row{padding:10px 14px}
+    .add-row button{width:100%}
+    .modal{position:fixed;inset:0;background:rgba(7,18,40,.48);display:none;align-items:flex-end;z-index:50}
+    .modal.open{display:flex}
+    .sheet{width:100%;max-width:760px;margin:0 auto;background:#fff;border-radius:22px 22px 0 0;padding:18px;max-height:92vh;overflow:auto}
+    .sheet h2{margin:0 0 14px;color:var(--navy);font-size:19px}
+    .field{margin-bottom:12px}
+    .field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--navy)}
+    .field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#fff}
+    .hours-preview{background:var(--pale);padding:12px;border-radius:10px;text-align:center;color:var(--navy);font-weight:800;margin:12px 0}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .employee{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+    .employee-actions{display:flex;gap:6px}
+    .report-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+    .report-card h3{margin:0 0 6px;color:var(--navy)}
+    .report-card p{margin:0 0 12px;color:var(--muted);font-size:12px}
+    .notice{background:#fff8e8;border:1px solid #ffe0a8;color:#7a5200;padding:10px;border-radius:10px;font-size:12px;margin-bottom:10px}
+    .mini{font-size:11px;color:var(--muted)}
+    @media (max-width:520px){
+      .shift{grid-template-columns:1fr .75fr .9fr auto;font-size:12px;padding:10px}
+      .grid3{gap:6px}
+      .hotel-card strong{font-size:19px}
+    }
+    .week-selector{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .week-selector select{flex:1;min-width:180px;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--navy)}
+    .weekly-capture{background:#fff;border:1px solid #cbd8e8;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);direction:ltr}
+    .weekly-capture-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:16px;background:#fff;border-bottom:4px solid var(--navy)}
+    .weekly-logo{display:flex;align-items:center;gap:10px}
+    .weekly-mark{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;place-items:center;color:white;font-weight:900}
+    .weekly-brand{font-weight:900;letter-spacing:1px;color:var(--navy);font-size:17px}.weekly-brand span{color:var(--blue)}
+    .weekly-sub{font-size:9px;color:var(--muted);margin-top:2px}
+    .weekly-title{text-align:right}.weekly-title b{display:block;font-size:18px;color:var(--navy)}.weekly-title span{font-size:11px;color:var(--muted)}
+    .weekly-table{width:100%;border-collapse:collapse;font-size:11px}.weekly-table th{background:var(--navy);color:#fff;padding:8px 5px;border-right:1px solid #2a416b}.weekly-table td{padding:8px 5px;text-align:center;border-right:1px solid #d9e2ef;border-bottom:1px solid #d9e2ef}.weekly-table tbody tr:nth-child(even){background:#eef6ff}.weekly-table .day{font-weight:900;color:#0d4a91}.weekly-table .name{font-weight:800;color:var(--navy)}
+    .weekly-total{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#eaf4ff;border-top:1px solid #bbd7fa;font-weight:800;color:var(--navy)}.weekly-total strong{font-size:19px;color:#0d4a91}
+    .weekly-foot{padding:8px;background:var(--navy);color:white;text-align:center;font-size:9px;letter-spacing:.5px}
+    .weekly-empty{color:#9aa5b1;font-style:italic}
+    .week-day-add{border:0;background:#eaf4ff;color:var(--navy);border-radius:7px;padding:4px 7px;font-weight:800}
+    @media(max-width:520px){.weekly-table{font-size:9.5px}.weekly-table th,.weekly-table td{padding:7px 3px}.weekly-capture-head{padding:12px}.weekly-title b{font-size:15px}.weekly-mark{width:42px;height:42px}}
+    @media print{
+      header,nav,.no-print{display:none!important}
+      body{background:#fff}
+      .app{max-width:none}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo-box">NS</div>
+      <div><h1>NELA SERVICE</h1><small>CLEANING & FACILITY SOLUTIONS</small></div>
+    </div>
+    <button class="iconbtn" onclick="openSettings()">⚙️</button>
+  </header>
+
+  <div class="monthbar">
+    <button onclick="shiftMonth(-1)">‹</button>
+    <select id="monthSelect" onchange="changeMonth()"></select>
+    <select id="yearSelect" onchange="changeMonth()"></select>
+    <button onclick="shiftMonth(1)">›</button>
+  </div>
+
+  <main>
+    <section id="homeView" class="view active">
+      <div class="section">
+        <div class="section-title">ساعات الفنادق</div>
+        <div class="grid3">
+          <div class="hotel-card" onclick="showHotelDetails('Neuss')"><b>Neuss</b><strong id="hNeuss">0h</strong><small>بدون خصم استراحة</small></div>
+          <div class="hotel-card" onclick="showHotelDetails('Krefeld')"><b>Krefeld</b><strong id="hKrefeld">0h</strong><small>بعد خصم الاستراحة</small></div>
+          <div class="hotel-card" onclick="showHotelDetails('Köln')"><b>Köln</b><strong id="hKoln">0h</strong><small>بدون خصم استراحة</small></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">ساعات العمال <span class="mini">(بدون خصم الاستراحة)</span></div>
+        <div id="workerCards" class="worker-scroll"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">الإدارة</div>
+        <div class="menu-list">
+          <div class="menu-card" onclick="switchView('plan')">
+            <div class="meta"><div class="menu-icon">📅</div><div><h3>بلان العمال</h3><p>إدارة الشفتات والجدول الشهري</p></div></div><b>‹</b>
+          </div>
+          <div class="menu-card" onclick="switchView('weekly')">
+            <div class="meta"><div class="menu-icon">🗓️</div><div><h3>البلان الأسبوعي</h3><p>من الاثنين إلى الأحد · مناسب للواتساب ولقطة الشاشة</p></div></div><b>‹</b>
+          </div>
+          <div class="menu-card" onclick="switchView('employees')">
+            <div class="meta"><div class="menu-icon">👥</div><div><h3>الموظفون</h3><p>إضافة / تعديل / حذف الموظفين</p></div></div><b>‹</b>
+          </div>
+          <div class="menu-card" onclick="switchView('reports')">
+            <div class="meta"><div class="menu-icon">📄</div><div><h3>التقارير و PDF</h3><p>البلان، العمال، وتقارير الفنادق</p></div></div><b>‹</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planView" class="view">
+      <div class="section">
+        <div class="toolbar no-print">
+          <button class="btn btn-primary" onclick="openShiftModal()">+ إضافة شفت</button>
+          <button class="btn btn-light" onclick="openCopyWeekModal()">نسخ أسبوع</button>
+        </div>
+        <div id="planList"></div>
+      </div>
+    </section>
+
+    <section id="weeklyView" class="view">
+      <div class="section">
+        <div class="week-selector no-print">
+          <select id="weeklyViewSelect" onchange="renderWeeklyView()"></select>
+          <button class="btn btn-primary" onclick="addShiftForSelectedWeek()">+ إضافة شفت</button>
+          <button class="btn btn-blue" onclick="printSelectedWeeklyView()">PDF</button>
+        </div>
+        <div class="mini no-print" style="margin:-2px 0 10px">اعرض هذا الجدول على الشاشة وخذ لقطة شاشة مباشرة لإرساله إلى كروب واتساب.</div>
+        <div id="weeklyCapture" class="weekly-capture"></div>
+      </div>
+    </section>
+
+    <section id="employeesView" class="view">
+      <div class="section">
+        <div class="toolbar">
+          <button class="btn btn-primary" onclick="openEmployeeModal()">+ إضافة موظف</button>
+        </div>
+        <div id="employeeList"></div>
+      </div>
+    </section>
+
+    <section id="reportsView" class="view">
+      <div class="section">
+        <div class="notice">زر PDF يفتح نسخة جاهزة للطباعة. على Android اختر “حفظ كملف PDF” من شاشة الطباعة.</div>
+        <div class="report-card">
+          <h3>PDF البلان الأسبوعي</h3>
+          <p>تصميم أسبوعي ملون بهوية NELA Service، من الاثنين إلى الأحد، ومناسب أيضًا للقطة شاشة.</p>
+          <div class="row2">
+            <select id="reportWeek"></select>
+            <button class="btn btn-primary" onclick="printWeeklyReport()">إنشاء PDF الأسبوع</button>
+          </div>
+        </div>
+        <div class="report-card">
+          <h3>PDF البلان الشهري</h3>
+          <p>جدول كامل بالشعار والهوية النيليّة، يوم/تاريخ/عامل/فندق/بداية/نهاية/ساعات.</p>
+          <button class="btn btn-primary" onclick="printPlanReport()">إنشاء PDF البلان</button>
+        </div>
+        <div class="report-card">
+          <h3>PDF جميع العمال</h3>
+          <p>تفاصيل ساعات كل عامل ومجموعه الشهري بدون خصم الاستراحة.</p>
+          <button class="btn btn-primary" onclick="printWorkersReport()">إنشاء PDF العمال</button>
+        </div>
+        <div class="report-card">
+          <h3>PDF فندق محدد</h3>
+          <p>Krefeld فقط يطبق خصم الاستراحة. Neuss و Köln بدون خصم.</p>
+          <div class="row2">
+            <select id="reportHotel"><option>Neuss</option><option>Krefeld</option><option>Köln</option></select>
+            <button class="btn btn-primary" onclick="printHotelReport()">إنشاء التقرير</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button id="navHome" class="active" onclick="switchView('home')">🏠<br>الرئيسية</button>
+    <button id="navPlan" onclick="switchView('plan')">📅<br>البلان</button>
+    <button id="navEmployees" onclick="switchView('employees')">👥<br>الموظفون</button>
+    <button id="navReports" onclick="switchView('reports')">📄<br>التقارير</button>
+  </nav>
+</div>
+
+<div id="shiftModal" class="modal" onclick="modalBackdrop(event,'shiftModal')">
+  <div class="sheet">
+    <h2 id="shiftModalTitle">إضافة شفت</h2>
+    <input type="hidden" id="shiftId">
+    <div class="field"><label>التاريخ</label><input id="shiftDate" type="date"></div>
+    <div class="field"><label>العامل</label><select id="shiftEmployee"></select></div>
+    <div class="field"><label>الفندق</label><select id="shiftHotel"><option>Neuss</option><option>Krefeld</option><option>Köln</option></select></div>
+    <div class="row2">
+      <div class="field"><label>من</label><input id="shiftStart" type="time" value="07:00"></div>
+      <div class="field"><label>إلى</label><input id="shiftEnd" type="time" value="15:00"></div>
+    </div>
+    <div class="field"><label>ملاحظة (اختياري)</label><input id="shiftNote" placeholder="مثال: Vertretung"></div>
+    <div id="shiftHoursPreview" class="hours-preview">إجمالي الساعات: 8h</div>
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="saveShift()">حفظ الشفت</button>
+      <button class="btn btn-light" onclick="closeModal('shiftModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div id="employeeModal" class="modal" onclick="modalBackdrop(event,'employeeModal')">
+  <div class="sheet">
+    <h2 id="employeeModalTitle">إضافة موظف</h2>
+    <input type="hidden" id="employeeId">
+    <div class="field"><label>اسم الموظف</label><input id="employeeName" placeholder="مثال: Omar"></div>
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="saveEmployee()">حفظ</button>
+      <button class="btn btn-light" onclick="closeModal('employeeModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div id="copyModal" class="modal" onclick="modalBackdrop(event,'copyModal')">
+  <div class="sheet">
+    <h2>نسخ الشفت</h2>
+    <input type="hidden" id="copyShiftId">
+    <div id="copyShiftInfo" class="notice"></div>
+    <div class="field"><label>اختر الأيام</label><div id="copyDays"></div></div>
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="copyShiftToDays()">نسخ للأيام المحددة</button>
+      <button class="btn btn-light" onclick="closeModal('copyModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MONTHS_AR=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const DAYS_AR=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+let state = JSON.parse(localStorage.getItem('nelaState')||'null') || {
+  employees:[
+    {id:1,name:"Omar"},
+    {id:2,name:"Hassan"},
+    {id:3,name:"Dejan"},
+    {id:4,name:"Nour"}
+  ],
+  shifts:[],
+  settings:{krefeldBreakAfterHours:6,krefeldBreakMinutes:30}
+};
+let current = {year:2026, month:7};
+
+function saveState(){localStorage.setItem('nelaState',JSON.stringify(state));renderAll()}
+function uid(){return Date.now()+Math.floor(Math.random()*100000)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+
+function init(){
+  const ms=document.getElementById('monthSelect');
+  MONTHS_AR.forEach((m,i)=>ms.innerHTML+=`<option value="${i}">${m}</option>`);
+  const ys=document.getElementById('yearSelect');
+  for(let y=2024;y<=2032;y++) ys.innerHTML+=`<option value="${y}">${y}</option>`;
+  ms.value=current.month; ys.value=current.year;
+  ["shiftStart","shiftEnd"].forEach(id=>document.getElementById(id).addEventListener('input',updateHoursPreview));
+  renderAll();
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+function changeMonth(){
+  current.month=+document.getElementById('monthSelect').value;
+  current.year=+document.getElementById('yearSelect').value;
+  renderAll();
+}
+function shiftMonth(delta){
+  current.month+=delta;
+  if(current.month<0){current.month=11;current.year--}
+  if(current.month>11){current.month=0;current.year++}
+  document.getElementById('monthSelect').value=current.month;
+  document.getElementById('yearSelect').value=current.year;
+  renderAll();
+}
+function switchView(name){
+  ["home","plan","weekly","employees","reports"].forEach(v=>{
+    document.getElementById(v+"View").classList.toggle("active",v===name);
+    document.getElementById("nav"+v[0].toUpperCase()+v.slice(1))?.classList.toggle("active",v===name);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function daysInCurrent(){return new Date(current.year,current.month+1,0).getDate()}
+function monthKey(){return `${current.year}-${String(current.month+1).padStart(2,'0')}`}
+function dateKey(d){return `${monthKey()}-${String(d).padStart(2,'0')}`}
+function getEmployee(id){return state.employees.find(e=>e.id==id)}
+function monthShifts(){return state.shifts.filter(s=>s.date.startsWith(monthKey()))}
+function rawHours(s){
+  const [sh,sm]=s.start.split(":").map(Number), [eh,em]=s.end.split(":").map(Number);
+  let mins=(eh*60+em)-(sh*60+sm); if(mins<=0) mins+=24*60;
+  return mins/60;
+}
+function breakHours(s){
+  const h=rawHours(s);
+  if(s.hotel==="Krefeld" && h>state.settings.krefeldBreakAfterHours) return state.settings.krefeldBreakMinutes/60;
+  return 0;
+}
+function netHotelHours(s){return rawHours(s)-breakHours(s)}
+function fmt(h){return (Math.round(h*100)/100).toFixed(h%1?1:0)+"h"}
+
+function renderAll(){populateWeekSelect(); populateWeeklyViewSelect();
+  renderDashboard(); renderPlan(); renderWeeklyView(); renderEmployees(); populateEmployeeSelect();
+}
+function renderDashboard(){
+  const ms=monthShifts();
+  ["Neuss","Krefeld","Köln"].forEach(h=>{
+    const sum=ms.filter(s=>s.hotel===h).reduce((a,s)=>a+netHotelHours(s),0);
+    document.getElementById(h==="Köln"?"hKoln":"h"+h).textContent=fmt(sum);
+  });
+  const wc=document.getElementById('workerCards');
+  wc.innerHTML=state.employees.map(e=>{
+    const sum=ms.filter(s=>s.employeeId==e.id).reduce((a,s)=>a+rawHours(s),0);
+    return `<div class="worker-card" onclick="showWorkerDetails(${e.id})"><div class="avatar">${esc(e.name).slice(0,1).toUpperCase()}</div><strong>${esc(e.name)}</strong><span>${fmt(sum)}</span></div>`;
+  }).join("") || `<div class="empty">لا يوجد موظفون بعد.</div>`;
+}
+function renderPlan(){
+  const list=document.getElementById('planList'); let html="";
+  for(let d=1;d<=daysInCurrent();d++){
+    const date=dateKey(d), dt=new Date(current.year,current.month,d);
+    const shifts=state.shifts.filter(s=>s.date===date).sort((a,b)=>a.start.localeCompare(b.start));
+    html+=`<div class="day-card"><div class="day-head"><div class="day-title">${DAYS_AR[dt.getDay()]} ${String(d).padStart(2,'0')}.${String(current.month+1).padStart(2,'0')}</div><button class="btn btn-light" onclick="openShiftModal('${date}')">+ إضافة شفت</button></div>`;
+    if(!shifts.length) html+=`<div class="empty">لا توجد شفتات</div>`;
+    shifts.forEach(s=>{
+      const e=getEmployee(s.employeeId);
+      html+=`<div class="shift">
+        <div><b>${esc(e?.name||"موظف محذوف")}</b><div class="mini">${esc(s.note||"")}</div></div>
+        <div class="hotel">${esc(s.hotel)}</div>
+        <div>${s.start}–${s.end}<br><span class="mini">${fmt(rawHours(s))}</span></div>
+        <div class="shift-actions"><button class="iconbtn" onclick="editShift(${s.id})">✏️</button><button class="iconbtn" onclick="openCopyShift(${s.id})">📋</button><button class="iconbtn" onclick="deleteShift(${s.id})">🗑️</button></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  list.innerHTML=html;
+}
+function populateEmployeeSelect(){
+  document.getElementById('shiftEmployee').innerHTML=state.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join("");
+}
+function openShiftModal(date){
+  if(!state.employees.length){alert("أضف موظفًا أولًا.");switchView('employees');return}
+  document.getElementById('shiftModalTitle').textContent="إضافة شفت";
+  document.getElementById('shiftId').value="";
+  document.getElementById('shiftDate').value=date||dateKey(1);
+  document.getElementById('shiftEmployee').value=state.employees[0].id;
+  document.getElementById('shiftHotel').value="Neuss";
+  document.getElementById('shiftStart').value="07:00";
+  document.getElementById('shiftEnd').value="15:00";
+  document.getElementById('shiftNote').value="";
+  updateHoursPreview();
+  document.getElementById('shiftModal').classList.add('open');
+}
+function editShift(id){
+  const s=state.shifts.find(x=>x.id===id); if(!s)return;
+  document.getElementById('shiftModalTitle').textContent="تعديل الشفت";
+  document.getElementById('shiftId').value=s.id;
+  document.getElementById('shiftDate').value=s.date;
+  document.getElementById('shiftEmployee').value=s.employeeId;
+  document.getElementById('shiftHotel').value=s.hotel;
+  document.getElementById('shiftStart').value=s.start;
+  document.getElementById('shiftEnd').value=s.end;
+  document.getElementById('shiftNote').value=s.note||"";
+  updateHoursPreview();
+  document.getElementById('shiftModal').classList.add('open');
+}
+function updateHoursPreview(){
+  const s={start:document.getElementById('shiftStart').value||"00:00",end:document.getElementById('shiftEnd').value||"00:00",hotel:document.getElementById('shiftHotel').value};
+  document.getElementById('shiftHoursPreview').textContent=`إجمالي الساعات: ${fmt(rawHours(s))} (البلان بدون خصم الاستراحة)`;
+}
+document.getElementById?.("shiftHotel")?.addEventListener?.("change",updateHoursPreview);
+function saveShift(){
+  const id=+document.getElementById('shiftId').value||null;
+  const s={id:id||uid(),date:document.getElementById('shiftDate').value,employeeId:+document.getElementById('shiftEmployee').value,hotel:document.getElementById('shiftHotel').value,start:document.getElementById('shiftStart').value,end:document.getElementById('shiftEnd').value,note:document.getElementById('shiftNote').value.trim()};
+  if(!s.date||!s.start||!s.end){alert("أكمل التاريخ ووقت البداية والنهاية.");return}
+  const overlaps=state.shifts.filter(x=>x.id!==s.id&&x.date===s.date&&x.employeeId===s.employeeId&&overlap(x,s));
+  if(overlaps.length && !confirm("⚠️ يوجد تداخل مع شفت آخر لهذا العامل. هل تريد الحفظ رغم ذلك؟")) return;
+  if(id) state.shifts=state.shifts.map(x=>x.id===id?s:x); else state.shifts.push(s);
+  closeModal('shiftModal'); saveState();
+}
+function interval(s){
+  const m=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
+  let a=m(s.start),b=m(s.end); if(b<=a)b+=1440; return [a,b];
+}
+function overlap(a,b){const [a1,a2]=interval(a),[b1,b2]=interval(b);return Math.max(a1,b1)<Math.min(a2,b2)}
+function deleteShift(id){if(confirm("حذف هذا الشفت؟")){state.shifts=state.shifts.filter(s=>s.id!==id);saveState()}}
+function openCopyShift(id){
+  const s=state.shifts.find(x=>x.id===id), e=getEmployee(s.employeeId);
+  document.getElementById('copyShiftId').value=id;
+  document.getElementById('copyShiftInfo').textContent=`${e?.name||""} | ${s.hotel} | ${s.start}–${s.end}`;
+  let html="";
+  for(let d=1;d<=daysInCurrent();d++){
+    const dt=new Date(current.year,current.month,d), dk=dateKey(d);
+    html+=`<label style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border)"><span>${DAYS_AR[dt.getDay()]} ${String(d).padStart(2,'0')}.${String(current.month+1).padStart(2,'0')}</span><input type="checkbox" class="copyDay" value="${dk}"></label>`;
+  }
+  document.getElementById('copyDays').innerHTML=html;
+  document.getElementById('copyModal').classList.add('open');
+}
+function copyShiftToDays(){
+  const id=+document.getElementById('copyShiftId').value,s=state.shifts.find(x=>x.id===id);
+  const days=[...document.querySelectorAll('.copyDay:checked')].map(x=>x.value);
+  days.forEach(date=>state.shifts.push({...s,id:uid(),date}));
+  closeModal('copyModal');saveState();
+}
+function openCopyWeekModal(){alert("نسخ الأسبوع الكامل مخصص للنسخة التالية. حاليًا استخدم 📋 بجانب أي شفت لنسخه إلى عدة أيام بنقرة واحدة.")}
+
+function renderEmployees(){
+  const el=document.getElementById('employeeList');
+  el.innerHTML=state.employees.map(e=>`<div class="employee"><b>${esc(e.name)}</b><div class="employee-actions"><button class="iconbtn" onclick="editEmployee(${e.id})">✏️ تعديل</button><button class="iconbtn" onclick="deleteEmployee(${e.id})">🗑️ حذف</button></div></div>`).join("")||`<div class="empty">لا يوجد موظفون.</div>`;
+}
+function openEmployeeModal(){
+  document.getElementById('employeeModalTitle').textContent="إضافة موظف";document.getElementById('employeeId').value="";document.getElementById('employeeName').value="";document.getElementById('employeeModal').classList.add('open');
+}
+function editEmployee(id){const e=getEmployee(id);document.getElementById('employeeModalTitle').textContent="تعديل الموظف";document.getElementById('employeeId').value=id;document.getElementById('employeeName').value=e.name;document.getElementById('employeeModal').classList.add('open')}
+function saveEmployee(){
+  const name=document.getElementById('employeeName').value.trim(); if(!name){alert("اكتب اسم الموظف.");return}
+  const id=+document.getElementById('employeeId').value||null;
+  if(id) state.employees=state.employees.map(e=>e.id===id?{...e,name}:e); else state.employees.push({id:uid(),name});
+  closeModal('employeeModal');saveState();
+}
+function deleteEmployee(id){
+  const has=state.shifts.some(s=>s.employeeId===id);
+  const msg=has?"هذا الموظف لديه شفتات محفوظة. حذف الموظف سيبقي الشفتات القديمة باسم «موظف محذوف». متابعة؟":"حذف الموظف؟";
+  if(confirm(msg)){state.employees=state.employees.filter(e=>e.id!==id);saveState()}
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function modalBackdrop(e,id){if(e.target.id===id)closeModal(id)}
+function showWorkerDetails(id){
+  const e=getEmployee(id), rows=monthShifts().filter(s=>s.employeeId===id);
+  alert(`${e.name}\nعدد الشفتات: ${rows.length}\nمجموع الساعات: ${fmt(rows.reduce((a,s)=>a+rawHours(s),0))}`);
+}
+function showHotelDetails(h){
+  const rows=monthShifts().filter(s=>s.hotel===h);
+  alert(`${h}\nعدد الشفتات: ${rows.length}\nمجموع الساعات: ${fmt(rows.reduce((a,s)=>a+netHotelHours(s),0))}`);
+}
+function openSettings(){alert(`إعداد Krefeld الحالي: خصم ${state.settings.krefeldBreakMinutes} دقيقة إذا كان الشفت أكثر من ${state.settings.krefeldBreakAfterHours} ساعات.`)}
+
+function populateWeeklyViewSelect(){
+  const el=document.getElementById('weeklyViewSelect'); if(!el)return;
+  const weeks=weeksInCurrentMonth(), old=el.value;
+  el.innerHTML=weeks.map((w,i)=>`<option value="${i}">Woche ${w.kw} · ${w.start.split('-').reverse().join('.')} – ${w.end.split('-').reverse().join('.')}</option>`).join('');
+  if(old&&[...el.options].some(o=>o.value===old))el.value=old;
+}
+function selectedWeeklyViewWeek(){
+  const weeks=weeksInCurrentMonth(), el=document.getElementById('weeklyViewSelect');
+  return weeks[+(el?.value||0)]||weeks[0];
+}
+function renderWeeklyView(){
+  const box=document.getElementById('weeklyCapture'); if(!box)return;
+  const w=selectedWeeklyViewWeek(); if(!w){box.innerHTML='';return}
+  const rows=state.shifts.filter(s=>s.date>=w.start&&s.date<=w.end).sort((a,b)=>a.date.localeCompare(b.date)||a.start.localeCompare(b.start));
+  const days=[]; let d=new Date(w.start+'T12:00:00');
+  for(let i=0;i<7;i++){days.push(isoDate(d));d.setDate(d.getDate()+1)}
+  let body='';
+  days.forEach(ds=>{
+    const dt=new Date(ds+'T12:00:00'), dayRows=rows.filter(s=>s.date===ds);
+    if(dayRows.length){
+      dayRows.forEach((s,j)=>{const e=getEmployee(s.employeeId),br=breakHours(s),net=rawHours(s)-br;body+=`<tr><td class="day">${j===0?DAYS_DE_SHORT[dt.getDay()]:''}</td><td>${j===0?ds.split('-').reverse().join('.'):''}</td><td class="name">${esc(e?.name||'Gelöschter Mitarbeiter')}</td><td>${esc(s.hotel)}</td><td>${s.start}</td><td>${s.end}</td><td>${br?fmt(br):'-'}</td><td><b>${fmt(net)}</b></td></tr>`})
+    }else{
+      body+=`<tr><td class="day">${DAYS_DE_SHORT[dt.getDay()]}</td><td>${ds.split('-').reverse().join('.')}</td><td colspan="5" class="weekly-empty">Keine Schicht</td><td><button class="week-day-add no-print" onclick="openShiftModal('${ds}')">+</button></td></tr>`
+    }
+  });
+  const total=rows.reduce((a,s)=>a+rawHours(s)-breakHours(s),0);
+  box.innerHTML=`<div class="weekly-capture-head"><div class="weekly-logo"><div class="weekly-mark">NS</div><div><div class="weekly-brand">NELA <span>SERVICE</span></div><div class="weekly-sub">CLEANING & FACILITY SOLUTIONS</div></div></div><div class="weekly-title"><b>WOCHENPLAN</b><span>Woche ${w.kw} · ${w.start.split('-').reverse().join('.')} – ${w.end.split('-').reverse().join('.')}</span></div></div><table class="weekly-table"><thead><tr><th>Tag</th><th>Datum</th><th>Mitarbeiter</th><th>Einsatzort</th><th>Beginn</th><th>Ende</th><th>Pause</th><th>Std.</th></tr></thead><tbody>${body}</tbody></table><div class="weekly-total"><span>GESAMTSTUNDEN DER WOCHE</span><strong>${fmt(total)}</strong></div><div class="weekly-foot">NELA SERVICE – ZUVERLÄSSIG. SAUBER. PROFESSIONELL.</div>`;
+}
+function addShiftForSelectedWeek(){const w=selectedWeeklyViewWeek();openShiftModal(w?.start||dateKey(1))}
+function printSelectedWeeklyView(){const src=document.getElementById('weeklyViewSelect'), dst=document.getElementById('reportWeek');if(dst&&src)dst.value=src.value;printWeeklyReport()}
+
+function reportShell(title, subtitle, body, summary, footer="NELA SERVICE • MONATSBERICHT"){
+  return `<!doctype html><html lang="de" dir="ltr"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+  @page{size:A4;margin:12mm} body{font-family:Arial,Helvetica,sans-serif;color:#0D1B3D;margin:0}.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:4px solid #0D1B3D;padding-bottom:12px;margin-bottom:14px}.logo{display:flex;gap:10px;align-items:center}.mark{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#0D1B3D,#1E88FF);color:#fff;display:grid;place-items:center;font-weight:800;font-size:21px}.brand{font-size:22px;font-weight:800;letter-spacing:1px}.brand span{color:#1E88FF}.sub{font-size:10px;color:#536078}.report-title{text-align:right}.report-title h1{font-size:20px;margin:0 0 6px}.report-title p{margin:0;color:#536078}.bar{height:6px;background:#1E88FF;border-radius:6px;margin:8px 0 16px}.table{width:100%;border-collapse:collapse;font-size:11px}.table th{background:#0D1B3D;color:#fff;padding:8px;border:1px solid #23385f}.table td{padding:7px;border:1px solid #cfd9e8;text-align:center}.table tbody tr:nth-child(even){background:#F1F7FF}.sum{margin-top:16px;background:#EAF4FF;border:1px solid #BBD7FA;padding:12px;border-radius:10px;font-weight:700}.foot{margin-top:18px;background:#0D1B3D;color:#fff;padding:8px;text-align:center;font-size:10px}.group{margin-top:10px}.group h3{background:#E6F0FF;padding:7px;margin:0;border:1px solid #cfd9e8}
+  </style></head><body><div class="head"><div class="logo"><div class="mark">NS</div><div><div class="brand">NELA <span>SERVICE</span></div><div class="sub">CLEANING & FACILITY SOLUTIONS</div></div></div><div class="report-title"><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div></div><div class="bar"></div>${body}<div class="sum">${summary}</div><div class="foot">${footer}</div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`;
+}
+function openReport(html){
+  const w=window.open("","_blank"); if(!w){alert("Bitte Pop-ups erlauben, um das PDF zu erstellen.");return}
+  w.document.open();w.document.write(html);w.document.close();
+}
+const DAYS_DE=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+const DAYS_DE_SHORT=["SO","MO","DI","MI","DO","FR","SA"];
+const MONTHS_DE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+function rowDE(s, hotelNet=false){
+  const e=getEmployee(s.employeeId), d=new Date(s.date+"T12:00:00"), gross=rawHours(s), br=hotelNet?breakHours(s):0, net=gross-br;
+  return `<tr><td>${DAYS_DE[d.getDay()]}</td><td>${s.date.split("-").reverse().join(".")}</td><td>${esc(e?.name||"Gelöschter Mitarbeiter")}</td><td>${esc(s.hotel)}</td><td>${s.start}</td><td>${s.end}</td><td>${fmt(gross)}</td>${hotelNet?`<td>${br?fmt(br):"-"}</td><td>${fmt(net)}</td>`:""}</tr>`;
+}
+function printPlanReport(){
+  const ms=monthShifts().sort((a,b)=>a.date.localeCompare(b.date)||a.start.localeCompare(b.start));
+  let body=`<table class="table"><thead><tr><th>Tag</th><th>Datum</th><th>Mitarbeiter</th><th>Hotel / Einsatzort</th><th>Beginn</th><th>Ende</th><th>Stunden</th></tr></thead><tbody>${ms.map(s=>rowDE(s,false)).join("")||`<tr><td colspan="7">Keine Daten vorhanden</td></tr>`}</tbody></table>`;
+  const total=ms.reduce((a,s)=>a+rawHours(s),0);
+  openReport(reportShell("MONATSPLAN",`${MONTHS_DE[current.month]} ${current.year}`,body,`Schichten gesamt: ${ms.length} &nbsp;&nbsp;|&nbsp;&nbsp; Gesamtstunden: ${fmt(total)}`));
+}
+function printWorkersReport(){
+  let body="";
+  state.employees.forEach(e=>{
+    const rows=monthShifts().filter(s=>s.employeeId===e.id).sort((a,b)=>a.date.localeCompare(b.date));
+    const total=rows.reduce((a,s)=>a+rawHours(s),0);
+    body+=`<div class="group"><h3>${esc(e.name)} — Gesamt: ${fmt(total)} Std.</h3><table class="table"><thead><tr><th>Tag</th><th>Datum</th><th>Mitarbeiter</th><th>Hotel / Einsatzort</th><th>Beginn</th><th>Ende</th><th>Stunden</th></tr></thead><tbody>${rows.map(s=>rowDE(s,false)).join("")||`<tr><td colspan="7">Keine Schichten vorhanden</td></tr>`}</tbody></table></div>`;
+  });
+  const total=monthShifts().reduce((a,s)=>a+rawHours(s),0);
+  openReport(reportShell("ARBEITSZEITBERICHT – MITARBEITER",`${MONTHS_DE[current.month]} ${current.year}`,body,`Gesamtstunden aller Mitarbeiter: ${fmt(total)}`));
+}
+function printHotelReport(){
+  const h=document.getElementById('reportHotel').value;
+  const rows=monthShifts().filter(s=>s.hotel===h).sort((a,b)=>a.date.localeCompare(b.date));
+  let body=`<table class="table"><thead><tr><th>Tag</th><th>Datum</th><th>Mitarbeiter</th><th>Hotel / Einsatzort</th><th>Beginn</th><th>Ende</th><th>Brutto</th><th>Pause</th><th>Netto</th></tr></thead><tbody>${rows.map(s=>rowDE(s,true)).join("")||`<tr><td colspan="9">Keine Daten vorhanden</td></tr>`}</tbody></table>`;
+  const gross=rows.reduce((a,s)=>a+rawHours(s),0), br=rows.reduce((a,s)=>a+breakHours(s),0), net=rows.reduce((a,s)=>a+netHotelHours(s),0);
+  openReport(reportShell(`HOTELBERICHT – ${h}`,`${MONTHS_DE[current.month]} ${current.year}`,body,`Gesamtstunden: ${fmt(gross)} &nbsp;|&nbsp; Pausen: ${fmt(br)} &nbsp;|&nbsp; Netto: ${fmt(net)}`));
+}
+function mondayOf(date){const d=new Date(date);const day=d.getDay();const diff=(day===0?-6:1-day);d.setDate(d.getDate()+diff);d.setHours(12,0,0,0);return d}
+function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function calendarWeek(d){const x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=x.getUTCDay()||7;x.setUTCDate(x.getUTCDate()+4-day);const y=new Date(Date.UTC(x.getUTCFullYear(),0,1));return Math.ceil((((x-y)/86400000)+1)/7)}
+function weeksInCurrentMonth(){
+  const first=new Date(current.year,current.month,1,12), last=new Date(current.year,current.month+1,0,12);let m=mondayOf(first),out=[];
+  while(m<=last){const sun=new Date(m);sun.setDate(m.getDate()+6);out.push({start:isoDate(m),end:isoDate(sun),kw:calendarWeek(m)});m=new Date(m);m.setDate(m.getDate()+7)}return out;
+}
+function populateWeekSelect(){const el=document.getElementById('reportWeek');if(!el)return;const old=el.value;el.innerHTML=weeksInCurrentMonth().map((w,i)=>`<option value="${i}">Woche ${w.kw} · ${w.start.split('-').reverse().join('.')} – ${w.end.split('-').reverse().join('.')}</option>`).join('');if(old&&[...el.options].some(o=>o.value===old))el.value=old}
+function printWeeklyReport(){
+  const weeks=weeksInCurrentMonth(), idx=+(document.getElementById('reportWeek')?.value||0), w=weeks[idx]||weeks[0];if(!w)return;
+  const rows=state.shifts.filter(s=>s.date>=w.start&&s.date<=w.end).sort((a,b)=>a.date.localeCompare(b.date)||a.start.localeCompare(b.start));
+  const bodyRows=rows.map(s=>{const e=getEmployee(s.employeeId),d=new Date(s.date+'T12:00:00'),gross=rawHours(s),br=breakHours(s),net=gross-br;return `<tr><td style="font-weight:800;color:#0D4A91">${DAYS_DE_SHORT[d.getDay()]}</td><td>${s.date.split('-').reverse().join('.')}</td><td>${esc(e?.name||'Gelöschter Mitarbeiter')}</td><td>${esc(s.hotel)}</td><td>${s.start}</td><td>${s.end}</td><td>${br?fmt(br):'-'}</td><td style="font-weight:800;color:#0D4A91">${fmt(net)}</td></tr>`}).join('')||`<tr><td colspan="8">Keine Schichten vorhanden</td></tr>`;
+  const total=rows.reduce((a,s)=>a+rawHours(s)-breakHours(s),0);
+  const body=`<table class="table"><thead><tr><th>Tag</th><th>Datum</th><th>Mitarbeiter</th><th>Hotel / Einsatzort</th><th>Beginn</th><th>Ende</th><th>Pause</th><th>Stunden</th></tr></thead><tbody>${bodyRows}</tbody></table>`;
+  openReport(reportShell("WOCHENPLAN",`Woche ${w.kw} · ${w.start.split('-').reverse().join('.')} – ${w.end.split('-').reverse().join('.')}`,body,`GESAMTSTUNDEN DER WOCHE: &nbsp; <span style="font-size:20px;color:#0D4A91">${fmt(total)} Std.</span> &nbsp;&nbsp; <span style="font-weight:400">Pause gemäß hinterlegter Regel bereits abgezogen.</span>`,"NELA SERVICE – ZUVERLÄSSIG. SAUBER. PROFESSIONELL."));
+}
+
+init();
+</script>
+</body>
+</html>
